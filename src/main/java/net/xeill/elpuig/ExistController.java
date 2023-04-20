@@ -7,6 +7,7 @@ import javax.xml.xquery.XQDataSource;
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQExpression;
 import javax.xml.xquery.XQResultSequence;
+import java.util.Properties;
 
 //import net.xqj.exist.ExistXQDataSource;
 
@@ -17,6 +18,8 @@ public class ExistController {
             XQDataSource xqs = new ExistXQDataSource();
             xqs.setProperty("serverName", "localhost");
             xqs.setProperty("port", "8080");
+            xqs.setProperty("user", "admin");
+            xqs.setProperty("password", "admin");
             connection = xqs.getConnection();
 
         } catch (XQException e) {
@@ -34,6 +37,17 @@ public class ExistController {
         }
     }
 
+    public boolean executeCommand(String command) {
+        try {
+            XQExpression xqe = connection.createExpression();
+            xqe.executeCommand(command);
+            System.out.println("** Instrucción Ejecutada **");
+            return true;
+        } catch (XQException e) {
+            return false;
+        }
+    }
+
     public void printResultSequence(XQResultSequence xqrs) {
         try {
             while (xqrs.next()) {
@@ -43,5 +57,4 @@ public class ExistController {
             throw new RuntimeException(e);
         }
     }
-
 }
