@@ -1,30 +1,59 @@
 package net.xeill.elpuig;
 
-import org.xmldb.api.DatabaseManager;
-import org.xmldb.api.base.Collection;
-import org.xmldb.api.base.Resource;
-import org.xmldb.api.base.ResourceSet;
-import org.xmldb.api.base.XMLDBException;
-import org.xmldb.api.modules.XMLResource;
-import org.xmldb.api.modules.XQueryService;
-
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQResultSequence;
+import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) throws XQException {
         ExistController ec = new ExistController();
+//        XQResultSequence xqrs = ec.executeQuery("for $game in doc('/db/nba/games.xml')/NBAGames/Game where $game/teamVisitor='Miami Heat' return $game");
+//        XQResultSequence xqrs = ec.executeQuery("doc('/db/nba/games.xml')/NBAGames/Game where teamVisitor='Miami Heat' return game/");
+//        ec.printResultSequence(xqrs);
+
+
         Scanner sc = new Scanner(System.in);
         ExistPlayerController playerController = new ExistPlayerController(ec, sc);
         ExistTeamsController teamsController = new ExistTeamsController(ec, sc);
 
-        ExistMenu menu = new ExistMenu(sc,playerController,teamsController);
+        ExistMenu menu = new ExistMenu(sc, playerController, teamsController);
 
-        menu.principalMenu();
-//        XQResultSequence xqrs = ec.executeQuery("for $game in doc('/db/nba/games.xml')/NBAGames/Game where $game/teamVisitor='Miami Heat' return $game/pointsVisitor");
-//        ec.printResultSequence(xqrs);
+        try {
+            String action = menu.actionsMenu();
+            String table = menu.tableMenu();
+
+
+            switch (table) {
+                case "players" -> {
+                    if (action.equalsIgnoreCase("select")) playerController.executeQuery();
+                    else playerController.executeCommand(action);
+                }
+                case "teams" -> {
+                }
+                case "seasons" -> {
+
+                }
+                case "games" -> {
+                }
+            }
+
+//            switch (action) {
+//                case "select" -> {
+//
+//                }
+//                case "insert" -> {
+//                }
+//                case "update" -> {
+//                    /*use "value"*/
+//                }
+//                case "delete" -> {
+//                }
+//            }
+        } catch (RuntimeException e) {
+            System.out.println(" ** ERROR from the MENU ** ");
+        }
         //xqrs = ec.executeQuery("for $book in doc('/db/apps/foaf/books.xml')/library/book where $book/year < 1960 return $book");
         //ec.printResultSequence(xqrs);
 

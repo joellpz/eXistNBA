@@ -25,13 +25,23 @@ public class ExistPlayerController {
     }
 
     public void executeCommand(String type) {
-        String cmd = "update " + type + "\\n doc('/db/nba/players.xml')/NBAPlayers/Player";
+        String cmd = "update " + type + "\\n doc('/db/nba/players.xml')/NBAPlayers/Player where";
         existController.executeCommand(cmd + filter());
+    }
+
+    public void executeQuery() {
+        String query = "for $i in doc('/db/nba/players.xml')/NBAPlayers/Player where $i/";
+        query = query.concat(filter() + " return $i");
+        System.out.println(" ** Que valor quieres devolver? **");
+        int attr = attributesMenu("query");
+        if (attr != -1) query = query.concat("/" + attributes.get(attr));
+
+        existController.printResultSequence(existController.executeQuery(query));
     }
 
     public String filter() {
         String filter, opt;
-        int attr = attributesMenu();
+        int attr = attributesMenu("command");
         boolean rep;
         do {
             rep = false;
@@ -43,23 +53,37 @@ public class ExistPlayerController {
                 rep = true;
         } while (rep);
         System.out.println(" ** ¿Qué valor quieres comparar? **");
-        filter = " where " + attributes.get(attr) + " "+opt+" '"+ sc.nextLine();
+        filter = attributes.get(attr) + " " + opt + " '" + sc.nextLine() + "'";
         return filter;
     }
 
-    public int attributesMenu() {
+    public int attributesMenu(String type) {
         int opt = -1;
-        do {
-            for (int i = 0; i < attributes.size(); i++) {
-                System.out.println(i+1+". "+attributes.get(i));
-            }
-            try {
-                opt = Integer.parseInt(sc.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println(" ** Error en el Formato del Input **");
-            }
-        } while (opt < 1 || opt > attributes.size());
-        return opt;
+        if (type.equalsIgnoreCase("query")) {
+            do {
+                for (int i = 0; i < attributes.size(); i++) {
+                    System.out.println(i + 1 + ". " + attributes.get(i));
+                }
+                try {
+                    System.out.println("0. Todo");
+                    opt = Integer.parseInt(sc.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println(" ** Error en el Formato del Input **");
+                }
+            } while (opt < 0 || opt > attributes.size());
+        } else if (type.equalsIgnoreCase("command")) {
+            do {
+                for (int i = 0; i < attributes.size(); i++) {
+                    System.out.println(i + 1 + ". " + attributes.get(i));
+                }
+                try {
+                    opt = Integer.parseInt(sc.nextLine());
+                } catch (NumberFormatException e) {
+                    System.out.println(" ** Error en el Formato del Input **");
+                }
+            } while (opt < 1 || opt > attributes.size());
+        }
+        return opt-1;
     }
 
 
