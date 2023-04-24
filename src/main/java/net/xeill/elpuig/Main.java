@@ -1,8 +1,9 @@
 package net.xeill.elpuig;
 
+import net.xeill.elpuig.controller.*;
+import net.xeill.elpuig.view.ExistMenu;
+
 import javax.xml.xquery.XQException;
-import javax.xml.xquery.XQResultSequence;
-import java.sql.SQLOutput;
 import java.util.Scanner;
 
 public class Main {
@@ -70,6 +71,7 @@ public class Main {
                     rep = false;
                 }
             } catch (RuntimeException e) {
+                System.out.println(e);
                 System.out.println(" ** ERROR from the MENU ** ");
             }
             //xqrs = ec.executeQuery("for $book in doc('/db/apps/foaf/books.xml')/library/book where $book/year < 1960 return $book");
