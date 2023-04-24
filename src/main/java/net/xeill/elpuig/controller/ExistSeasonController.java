@@ -1,4 +1,4 @@
-package net.xeill.elpuig;
+package net.xeill.elpuig.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Controlador para el archivo de los Partidos.
+ * Controlador para el archivo de los Temporadas.
  */
-public class ExistGameController {
+public class ExistSeasonController {
     /**
      * Variable para definir el Path del documento en ExistDB.
      */
-    private static final String EXISTDB_PATH = "doc('/db/apps/nba/games.xml')/NBAGames";
+    private static final String EXISTDB_PATH = "doc('/db/apps/nba/seasons.xml')/NBASeasons";
     /**
      * Variable para definir el elemento base que contiene el archivo.
      */
-    private static final String BASE_ELEMENT = "Game";
+    private static final String BASE_ELEMENT = "Season";
     /**
      * Lista de Campos
      */
-    private final List<String> fields = new ArrayList(Arrays.asList("id", "date", "teamVisitor", "pointsVisitor", "teamLocal", "pointsLocal", "arena", "link"));
+    private final List<String> fields = new ArrayList(Arrays.asList("year", "league", "champion", "MVP", "ROTY", "PPG_Leader", "RGP_Leader", "APG_Leader", "WS_Leader", "link"));
     /**
      * Controlador General
      */
@@ -36,49 +36,50 @@ public class ExistGameController {
      * @param existController Controlador General
      * @param sc              Scanner
      */
-    public ExistGameController(ExistController existController, Scanner sc) {
+    public ExistSeasonController(ExistController existController, Scanner sc) {
         this.existController = existController;
         this.sc = sc;
     }
 
     /**
-     * Función para insertar un Partido Nuevo.
+     * Función para insertar un Temporada Nuevo.
      */
-    public void insertGame() {
-        String newGame = "<" + BASE_ELEMENT;
+    public void insertSeason() {
+        String newSeason = "<" + BASE_ELEMENT + ">\n";
         for (String attr : fields) {
             System.out.println("Valor para " + attr + ": ");
             if (attr.equalsIgnoreCase(fields.get(0)))
-                newGame = newGame.concat(" " + attr + "='" + sc.nextLine() + "'>\n");
-            else newGame = newGame.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
-
+                newSeason = newSeason.split(">\n")[0].concat(" " + attr + "='" + sc.nextLine() + "'>\n");
+            else newSeason = newSeason.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
         }
-        String query = "update insert \n" + newGame + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
+        String query = "update insert \n" + newSeason + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
         System.out.println(query);
         existController.executeCommand(query);
     }
 
     /**
-     * Función para actualizar un Partido.
+     * Función para actualizar un Temporada.
      */
-    public void updateGame() {
+    public void updateSeason() {
         System.out.println(" ** Qué elemento quieres actualizar? **");
         System.out.println(" ** Introduce el " + fields.get(0) + ": ");
         String query = "update value \n" +
-                EXISTDB_PATH + "/" + BASE_ELEMENT + "[" + fields.get(0) + "='" + sc.nextLine() + "']/";
+                EXISTDB_PATH + "/" + BASE_ELEMENT + "[@" + fields.get(0) + "='" + sc.nextLine() + "']/";
         System.out.println(" ** Que elemento quieres actualizar? **");
-        query = query.concat(fields.get(attributesMenu("command")) + "\n" +
+        int atr = attributesMenu("command");
+        query = query.concat(fields.get(atr) + "\n" +
                 "with ");
         System.out.println(" ** Que valor quieres poner? **");
         query = query.concat("'" + sc.nextLine() + "'");
+        System.out.println("Update: "+query);
         existController.executeCommand(query);
 
     }
 
     /**
-     * Función para eliminar un Partido.
+     * Función para eliminar un Temporada.
      */
-    public void deleteGame() {
+    public void deleteSeason() {
         System.out.println(" ** Selecciona que quieres comparar para eliminar **");
         String query = "update delete " + EXISTDB_PATH + "/" + BASE_ELEMENT + "[" + filter() + "]";
         existController.executeCommand(query);
@@ -93,12 +94,13 @@ public class ExistGameController {
         System.out.println(" ** Que valor quieres devolver? **");
         int attr = attributesMenu("query");
         if (attr != -1) query = query.concat("/" + fields.get(attr));
-
+        System.out.println("Query: "+query);
         existController.printResultSequence(existController.executeQuery(query));
     }
 
     /**
      * Permite definir el filtro con el que queremos realizar la consulta o comando.
+     * @return Query de filtro
      */
     public String filter() {
         String filter, opt;
@@ -117,6 +119,7 @@ public class ExistGameController {
         } while (rep);
         System.out.println(" ** ¿Qué valor quieres comparar? **");
         filter = fields.get(attr) + " " + opt + " '" + sc.nextLine() + "'";
+        if (attr == 0) filter = "@" + filter;
         return filter;
     }
 

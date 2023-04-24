@@ -1,4 +1,4 @@
-package net.xeill.elpuig;
+package net.xeill.elpuig.controller;
 
 import net.xqj.exist.ExistXQDataSource;
 
@@ -7,12 +7,21 @@ import javax.xml.xquery.XQDataSource;
 import javax.xml.xquery.XQException;
 import javax.xml.xquery.XQExpression;
 import javax.xml.xquery.XQResultSequence;
-import java.util.Properties;
 
 //import net.xqj.exist.ExistXQDataSource;
 
+/**
+ * Controlador General
+ */
 public class ExistController {
+    /**
+     * Conexión.
+     */
     private XQConnection connection;
+
+    /**
+     * Constructor
+     */
     public ExistController() {
         try {
             XQDataSource xqs = new ExistXQDataSource();
@@ -25,6 +34,11 @@ public class ExistController {
         }
     }
 
+    /**
+     * Ejecuta la query deseada
+     * @param query Query
+     * @return resultado
+     */
     public XQResultSequence executeQuery(String query) {
         try {
             XQExpression xqe = connection.createExpression();
@@ -35,6 +49,11 @@ public class ExistController {
         }
     }
 
+    /**
+     * Ejecuta el comando definido
+     * @param command Comando
+     * @return estado
+     */
     public boolean executeCommand(String command) {
         try {
             XQExpression xqe = connection.createExpression();
@@ -47,6 +66,10 @@ public class ExistController {
         }
     }
 
+    /**
+     * Muestra el resultado de la Query
+     * @param xqrs Resultado
+     */
     public void printResultSequence(XQResultSequence xqrs) {
         try {
             while (xqrs.next()) {

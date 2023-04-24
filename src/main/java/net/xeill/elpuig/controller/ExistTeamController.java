@@ -1,4 +1,4 @@
-package net.xeill.elpuig;
+package net.xeill.elpuig.controller;
 
 import java.util.Scanner;
 
@@ -97,6 +97,7 @@ public class ExistTeamController {
 
     /**
      * Permite definir el filtro con el que queremos realizar la consulta o comando.
+     * @return Query de filtro
      */
     public String filter() {
         String filter, opt;

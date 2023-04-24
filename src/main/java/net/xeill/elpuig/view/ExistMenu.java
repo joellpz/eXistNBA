@@ -1,7 +1,15 @@
-package net.xeill.elpuig;
+package net.xeill.elpuig.view;
+
+import net.xeill.elpuig.controller.ExistGameController;
+import net.xeill.elpuig.controller.ExistPlayerController;
+import net.xeill.elpuig.controller.ExistSeasonController;
+import net.xeill.elpuig.controller.ExistTeamController;
 
 import java.util.Scanner;
 
+/**
+ * Clase de los Menus
+ */
 public class ExistMenu {
     private static ExistPlayerController playerController;
     private static ExistTeamController teamsController;
@@ -18,6 +26,10 @@ public class ExistMenu {
 
     }
 
+    /**
+     * Menu de Tablas
+     * @return tabla
+     */
     //Menu de Seleccion de Tablas
     public String tableMenu() {
         int opt = -1;
@@ -55,6 +67,10 @@ public class ExistMenu {
         }
     }
 
+    /**
+     * Menu de Acciones
+     * @return acción
+     */
     public String actionsMenu() {
         int opt = -1;
         do {

@@ -1,4 +1,4 @@
-package net.xeill.elpuig;
+package net.xeill.elpuig.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Controlador para el archivo de los Jugadores.
+ * Controlador para el archivo de los Partidos.
  */
-public class ExistPlayerController {
+public class ExistGameController {
     /**
      * Variable para definir el Path del documento en ExistDB.
      */
-    private static final String EXISTDB_PATH = "doc('/db/apps/nba/players.xml')/NBAPlayers";
+    private static final String EXISTDB_PATH = "doc('/db/apps/nba/games.xml')/NBAGames";
     /**
      * Variable para definir el elemento base que contiene el archivo.
      */
-    private static final String BASE_ELEMENT = "Player";
+    private static final String BASE_ELEMENT = "Game";
     /**
      * Lista de Campos
      */
-    private final List<String> fields = new ArrayList(Arrays.asList("name", "position", "college", "draftTeam", "draftPos", "born", "age", "draftYear", "expCareer"));
+    private final List<String> fields = new ArrayList(Arrays.asList("id", "date", "teamVisitor", "pointsVisitor", "teamLocal", "pointsLocal", "arena", "link"));
     /**
      * Controlador General
      */
@@ -36,46 +36,50 @@ public class ExistPlayerController {
      * @param existController Controlador General
      * @param sc              Scanner
      */
-    public ExistPlayerController(ExistController existController, Scanner sc) {
+    public ExistGameController(ExistController existController, Scanner sc) {
         this.existController = existController;
         this.sc = sc;
     }
 
     /**
-     * Función para insertar un Jugador Nuevo.
+     * Función para insertar un Partido Nuevo.
      */
-    public void insertPlayer() {
-        String newPlayer = "<"+BASE_ELEMENT+">\n";
+    public void insertGame() {
+        String newGame = "<" + BASE_ELEMENT+">\n";
         for (String attr : fields) {
             System.out.println("Valor para " + attr + ": ");
-            newPlayer = newPlayer.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
+            if (attr.equalsIgnoreCase(fields.get(0)))
+                newGame = newGame.split(">\n")[0].concat(" " + attr + "='" + sc.nextLine() + "'>\n");
+            else newGame = newGame.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
+
         }
-        String query = "update insert \n" + newPlayer + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
+        String query = "update insert \n" + newGame + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
         System.out.println(query);
         existController.executeCommand(query);
     }
 
     /**
-     * Función para actualizar un Jugador.
+     * Función para actualizar un Partido.
      */
-    public void updatePlayer() {
+    public void updateGame() {
         System.out.println(" ** Qué elemento quieres actualizar? **");
         System.out.println(" ** Introduce el " + fields.get(0) + ": ");
         String query = "update value \n" +
-                EXISTDB_PATH + "/" + BASE_ELEMENT + "[" + fields.get(0) + "='" + sc.nextLine() + "']/";
+                EXISTDB_PATH + "/" + BASE_ELEMENT + "[@" + fields.get(0) + "='" + sc.nextLine() + "']/";
         System.out.println(" ** Que elemento quieres actualizar? **");
         query = query.concat(fields.get(attributesMenu("command")) + "\n" +
                 "with ");
         System.out.println(" ** Que valor quieres poner? **");
         query = query.concat("'" + sc.nextLine() + "'");
+        System.out.println("Command: "+query);
         existController.executeCommand(query);
 
     }
 
     /**
-     * Función para eliminar un Jugador.
+     * Función para eliminar un Partido.
      */
-    public void deletePlayer() {
+    public void deleteGame() {
         System.out.println(" ** Selecciona que quieres comparar para eliminar **");
         String query = "update delete " + EXISTDB_PATH + "/" + BASE_ELEMENT + "[" + filter() + "]";
         existController.executeCommand(query);
@@ -96,6 +100,7 @@ public class ExistPlayerController {
 
     /**
      * Permite definir el filtro con el que queremos realizar la consulta o comando.
+     * @return Query de filtro
      */
     public String filter() {
         String filter, opt;
@@ -114,9 +119,9 @@ public class ExistPlayerController {
         } while (rep);
         System.out.println(" ** ¿Qué valor quieres comparar? **");
         filter = fields.get(attr) + " " + opt + " '" + sc.nextLine() + "'";
+        if (attr == 0) filter = "@" + filter;
         return filter;
     }
-
 
     /**
      * Menu para listar los Campos
