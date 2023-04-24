@@ -18,9 +18,7 @@ public class ExistController {
             XQDataSource xqs = new ExistXQDataSource();
             xqs.setProperty("serverName", "localhost");
             xqs.setProperty("port", "8080");
-            xqs.setProperty("user", "admin");
-            xqs.setProperty("password", "admin");
-            connection = xqs.getConnection();
+            connection = xqs.getConnection("admin","admin");
 
         } catch (XQException e) {
             throw new RuntimeException(e);
@@ -44,6 +42,7 @@ public class ExistController {
             System.out.println("** Instrucción Ejecutada **");
             return true;
         } catch (XQException e) {
+            System.out.println(e);
             return false;
         }
     }

@@ -4,19 +4,25 @@ import java.util.Scanner;
 
 public class ExistMenu {
     private static ExistPlayerController playerController;
-    private static ExistTeamsController teamsController;
+    private static ExistTeamController teamsController;
+    private static ExistSeasonController seasonController;
+    private static ExistGameController gameController;
     private static Scanner sc;
 
-    public ExistMenu(Scanner sc, ExistPlayerController playerController, ExistTeamsController teamsController) {
+    public ExistMenu(Scanner sc, ExistPlayerController playerController, ExistTeamController teamsController, ExistSeasonController seasonController, ExistGameController gameController) {
         ExistMenu.sc = sc;
         ExistMenu.playerController = playerController;
         ExistMenu.teamsController = teamsController;
+        ExistMenu.seasonController = seasonController;
+        ExistMenu.gameController = gameController;
+
     }
 
     //Menu de Seleccion de Tablas
     public String tableMenu() {
         int opt = -1;
         do {
+            System.out.println(" ** Selecciona la Tabla **");
             System.out.println("1. Players");
             System.out.println("2. Teams");
             System.out.println("3. Seasons");
@@ -24,10 +30,11 @@ public class ExistMenu {
             System.out.println("0. Atrás");
             try {
                 opt = Integer.parseInt(sc.nextLine());
+                if (opt < 0 || opt > 4) System.out.println(" ** Error en el Formato del Input **");
             } catch (NumberFormatException e) {
                 System.out.println(" ** Error en el Formato del Input **");
             }
-        } while (opt < 1 || opt > 5);
+        } while (opt < 0 || opt > 5);
         switch (opt) {
             case 1 -> {
                 return "players";
@@ -41,19 +48,25 @@ public class ExistMenu {
             case 4 -> {
                 return "games";
             }
-            default -> throw  new RuntimeException();
+            case 0 -> {
+                return "back";
+            }
+            default -> throw new RuntimeException();
         }
     }
 
     public String actionsMenu() {
         int opt = -1;
         do {
+            System.out.println(" ** Que quieras hacer? **");
             System.out.println("1. Seleccionar");
             System.out.println("2. Insertar");
             System.out.println("3. Actualizar");
             System.out.println("4. Eliminar");
+            System.out.println("0. Salir");
             try {
                 opt = Integer.parseInt(sc.nextLine());
+                if (opt < 0 || opt > 4) System.out.println(" ** Error en el Formato del Input **");
             } catch (NumberFormatException e) {
                 System.out.println(" ** Error en el Formato del Input **");
             }
@@ -71,37 +84,12 @@ public class ExistMenu {
             case 4 -> {
                 return "delete";
             }
+            case 0 -> {
+                return "exit";
+            }
             default -> {
                 return null;
             }
         }
     }
-
-//    public static void attributesMenu() {
-//        List<String> attributes;
-//        int opt = -1;
-//        do {
-//            try {
-//                opt = Integer.parseInt(sc.nextLine());
-//            } catch (NumberFormatException e) {
-//                System.out.println(" ** Error en el Formato del Input **");
-//            }
-//            switch (opt) {
-//                case 1 -> {
-//                }
-//                case 2 -> {
-//                }
-//                case 3 -> {
-//                }
-//                case 4 -> {
-//                }
-//                case 5 -> {
-//                }
-//                default -> {
-//                }
-//            }
-//        } while (opt < 1 || opt > 5);
-//    }
-
-
 }

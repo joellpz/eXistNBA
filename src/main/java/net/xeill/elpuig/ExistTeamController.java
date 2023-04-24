@@ -1,26 +1,27 @@
 package net.xeill.elpuig;
 
+import java.util.Scanner;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 /**
- * Controlador para el archivo de los Jugadores.
+ * Controlador para el archivo de los Equipos.
  */
-public class ExistPlayerController {
+public class ExistTeamController {
     /**
      * Variable para definir el Path del documento en ExistDB.
      */
-    private static final String EXISTDB_PATH = "doc('/db/apps/nba/players.xml')/NBAPlayers";
+    private static final String EXISTDB_PATH = "doc('/db/apps/nba/teams.xml')/NBATeams";
     /**
      * Variable para definir el elemento base que contiene el archivo.
      */
-    private static final String BASE_ELEMENT = "Player";
+    private static final String BASE_ELEMENT = "Team";
     /**
      * Lista de Campos
      */
-    private final List<String> fields = new ArrayList(Arrays.asList("name", "position", "college", "draftTeam", "draftPos", "born", "age", "draftYear", "expCareer"));
+    private final List<String> fields = new ArrayList(Arrays.asList("name", "location", "games", "wins", "loses", "playoffAppearances", "conferenceChampions", "championships", "conference"));
     /**
      * Controlador General
      */
@@ -36,29 +37,29 @@ public class ExistPlayerController {
      * @param existController Controlador General
      * @param sc              Scanner
      */
-    public ExistPlayerController(ExistController existController, Scanner sc) {
+    public ExistTeamController(ExistController existController, Scanner sc) {
         this.existController = existController;
         this.sc = sc;
     }
 
     /**
-     * Función para insertar un Jugador Nuevo.
+     * Función para insertar un Equipo Nuevo.
      */
-    public void insertPlayer() {
-        String newPlayer = "<"+BASE_ELEMENT+">\n";
+    public void insertTeam() {
+        String newTeam = "<"+BASE_ELEMENT+">\n";
         for (String attr : fields) {
             System.out.println("Valor para " + attr + ": ");
-            newPlayer = newPlayer.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
+            newTeam = newTeam.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
         }
-        String query = "update insert \n" + newPlayer + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
+        String query = "update insert \n" + newTeam + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
         System.out.println(query);
         existController.executeCommand(query);
     }
 
     /**
-     * Función para actualizar un Jugador.
+     * Función para actualizar un Equipo.
      */
-    public void updatePlayer() {
+    public void updateTeam() {
         System.out.println(" ** Qué elemento quieres actualizar? **");
         System.out.println(" ** Introduce el " + fields.get(0) + ": ");
         String query = "update value \n" +
@@ -73,9 +74,9 @@ public class ExistPlayerController {
     }
 
     /**
-     * Función para eliminar un Jugador.
+     * Función para eliminar un Equipo.
      */
-    public void deletePlayer() {
+    public void deleteTeam() {
         System.out.println(" ** Selecciona que quieres comparar para eliminar **");
         String query = "update delete " + EXISTDB_PATH + "/" + BASE_ELEMENT + "[" + filter() + "]";
         existController.executeCommand(query);
@@ -116,7 +117,6 @@ public class ExistPlayerController {
         filter = fields.get(attr) + " " + opt + " '" + sc.nextLine() + "'";
         return filter;
     }
-
 
     /**
      * Menu para listar los Campos

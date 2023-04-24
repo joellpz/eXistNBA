@@ -6,21 +6,21 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Controlador para el archivo de los Jugadores.
+ * Controlador para el archivo de los Temporadas.
  */
-public class ExistPlayerController {
+public class ExistSeasonController {
     /**
      * Variable para definir el Path del documento en ExistDB.
      */
-    private static final String EXISTDB_PATH = "doc('/db/apps/nba/players.xml')/NBAPlayers";
+    private static final String EXISTDB_PATH = "doc('/db/apps/nba/teams.xml')/NBASeasons";
     /**
      * Variable para definir el elemento base que contiene el archivo.
      */
-    private static final String BASE_ELEMENT = "Player";
+    private static final String BASE_ELEMENT = "Season";
     /**
      * Lista de Campos
      */
-    private final List<String> fields = new ArrayList(Arrays.asList("name", "position", "college", "draftTeam", "draftPos", "born", "age", "draftYear", "expCareer"));
+    private final List<String> fields = new ArrayList(Arrays.asList("year", "league", "champion", "MVP", "ROTY", "PPG_Leader", "RGP_Leader", "APG_Leader", "WS_Leader", "link"));
     /**
      * Controlador General
      */
@@ -36,29 +36,31 @@ public class ExistPlayerController {
      * @param existController Controlador General
      * @param sc              Scanner
      */
-    public ExistPlayerController(ExistController existController, Scanner sc) {
+    public ExistSeasonController(ExistController existController, Scanner sc) {
         this.existController = existController;
         this.sc = sc;
     }
 
     /**
-     * Función para insertar un Jugador Nuevo.
+     * Función para insertar un Temporada Nuevo.
      */
-    public void insertPlayer() {
-        String newPlayer = "<"+BASE_ELEMENT+">\n";
+    public void insertSeason() {
+        String newSeason = "<" + BASE_ELEMENT + ">\n";
         for (String attr : fields) {
             System.out.println("Valor para " + attr + ": ");
-            newPlayer = newPlayer.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
+            if (attr.equalsIgnoreCase(fields.get(0)))
+                newSeason = newSeason.concat(" " + attr + "='" + sc.nextLine() + "'>\n");
+            else newSeason = newSeason.concat("   <" + attr + ">" + sc.nextLine() + "</" + attr + ">\n");
         }
-        String query = "update insert \n" + newPlayer + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
+        String query = "update insert \n" + newSeason + " </" + BASE_ELEMENT + "> into " + EXISTDB_PATH;
         System.out.println(query);
         existController.executeCommand(query);
     }
 
     /**
-     * Función para actualizar un Jugador.
+     * Función para actualizar un Temporada.
      */
-    public void updatePlayer() {
+    public void updateSeason() {
         System.out.println(" ** Qué elemento quieres actualizar? **");
         System.out.println(" ** Introduce el " + fields.get(0) + ": ");
         String query = "update value \n" +
@@ -73,9 +75,9 @@ public class ExistPlayerController {
     }
 
     /**
-     * Función para eliminar un Jugador.
+     * Función para eliminar un Temporada.
      */
-    public void deletePlayer() {
+    public void deleteSeason() {
         System.out.println(" ** Selecciona que quieres comparar para eliminar **");
         String query = "update delete " + EXISTDB_PATH + "/" + BASE_ELEMENT + "[" + filter() + "]";
         existController.executeCommand(query);
@@ -116,7 +118,6 @@ public class ExistPlayerController {
         filter = fields.get(attr) + " " + opt + " '" + sc.nextLine() + "'";
         return filter;
     }
-
 
     /**
      * Menu para listar los Campos

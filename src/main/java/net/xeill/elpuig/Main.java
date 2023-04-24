@@ -16,48 +16,67 @@ public class Main {
 
         Scanner sc = new Scanner(System.in);
         ExistPlayerController playerController = new ExistPlayerController(ec, sc);
-        ExistTeamsController teamsController = new ExistTeamsController(ec, sc);
-
-        ExistMenu menu = new ExistMenu(sc, playerController, teamsController);
-
-        try {
-            String action = menu.actionsMenu();
-            String table = menu.tableMenu();
+        ExistTeamController teamsController = new ExistTeamController(ec, sc);
+        ExistSeasonController seasonController = new ExistSeasonController(ec, sc);
+        ExistGameController gameController = new ExistGameController(ec, sc);
 
 
-            switch (table) {
-                case "players" -> {
-                    if (action.equalsIgnoreCase("select")) playerController.executeQuery();
-                    else playerController.executeCommand(action);
+        ExistMenu menu = new ExistMenu(sc, playerController, teamsController,seasonController,gameController);
+        String action, table;
+        boolean rep = true;
+        do {
+            try {
+                rep = true;
+                action = menu.actionsMenu();
+                if (!action.equalsIgnoreCase("exit")) {
+                    table = menu.tableMenu();
+                    switch (table) {
+                        case "players" -> {
+                            switch (action){
+                                case "select" -> playerController.executeQuery();
+                                case "insert" -> playerController.insertPlayer();
+                                case "delete" -> playerController.deletePlayer();
+                                case "update" -> playerController.updatePlayer();
+                            }
+                        }
+                        case "teams" -> {
+                            switch (action){
+                                case "select" -> teamsController.executeQuery();
+                                case "insert" -> teamsController.insertTeam();
+                                case "delete" -> teamsController.deleteTeam();
+                                case "update" -> teamsController.updateTeam();
+                            }
+                        }
+                        case "seasons" -> {
+                            switch (action){
+                                case "select" -> seasonController.executeQuery();
+                                case "insert" -> seasonController.insertSeason();
+                                case "delete" -> seasonController.deleteSeason();
+                                case "update" -> seasonController.updateSeason();
+                            }
+
+                        }
+                        case "games" -> {
+                            switch (action){
+                                case "select" -> gameController.executeQuery();
+                                case "insert" -> gameController.insertGame();
+                                case "delete" -> gameController.deleteGame();
+                                case "update" -> gameController.updateGame();
+                            }
+                        }
+                        default -> {}
+                    }
+                } else {
+                    rep = false;
                 }
-                case "teams" -> {
-                }
-                case "seasons" -> {
-
-                }
-                case "games" -> {
-                }
+            } catch (RuntimeException e) {
+                System.out.println(" ** ERROR from the MENU ** ");
             }
-
-//            switch (action) {
-//                case "select" -> {
-//
-//                }
-//                case "insert" -> {
-//                }
-//                case "update" -> {
-//                    /*use "value"*/
-//                }
-//                case "delete" -> {
-//                }
-//            }
-        } catch (RuntimeException e) {
-            System.out.println(" ** ERROR from the MENU ** ");
-        }
-        //xqrs = ec.executeQuery("for $book in doc('/db/apps/foaf/books.xml')/library/book where $book/year < 1960 return $book");
-        //ec.printResultSequence(xqrs);
-
+            //xqrs = ec.executeQuery("for $book in doc('/db/apps/foaf/books.xml')/library/book where $book/year < 1960 return $book");
+            //ec.printResultSequence(xqrs);
+        } while (rep);
     }
+
 }
 
 
